@@ -3,19 +3,9 @@ VM_USER=evan
 
 ## IOMMU groups
 IOMMU_USB="00:14.0"
-#IOMMU_USB="06:00.0"
-IOMMU_GPU="01:00.0"
-IOMMU_GPU_AUDIO="01:00.1"
 IOMMU_GPU2="02:00.0"
 IOMMU_GPU_AUDIO2="02:00.1"
 IOMMU_SATA="00:17.0"
-
-
-
-## For extracting the VBIOS
-#VBIOS_EXTRACT_PATH=/root/VBIOSMAC.rom
-#NVFLASH=/root/nvflash_linux
-#extract_videobusid="0000:$IOMMU_GPU"
 
 ## Virsh devices
 VIRSH_USB=pci_0000_00_14_0
@@ -26,17 +16,7 @@ VIRSH_GPU2=pci_0000_02_00_0
 VIRSH_GPU_AUDIO2=pci_0000_02_00_1
 VIRSH_SATA=pci_0000_00_17_0
 
-
-# PCI BUS ID
-videoid="10de 1b80"
-audioid="10de 10f0"
-videobusid="0000:$IOMMU_GPU"
-audiobusid="0000:$IOMMU_GPU_AUDIO"
-
-
 ## QEMU options
-#RAM=12G
-#CORES=8
 MACOS_RAM=12G
 MACOS_CORES=8
 
@@ -52,17 +32,12 @@ LOG=/home/$VM_USER/MacOS/qemu_log_mac.txt
 ## Local path for storage
 IMAGES=/home/$VM_USER/MacOS
 
-## VBIOS
-VBIOS=$IMAGES/VBIOS.rom
-
 ## MacOS
-#MACOS_ISO=$IMAGES/Mojave.iso
 MACOS_IMG=$IMAGES/Mojave.qcow2
 MACOS_CLOVER=$IMAGES/Clover.qcow2
 MACOS_OVMF=$IMAGES/OVMF_CODE.fd
 MACOS_OVMF_VARS=$IMAGES/OVMF_VARS.fd
 MACOS_OPTIONS="+pcid,+ssse3,+sse4.2,+popcnt,+aes,+xsave,+avx,+xsaveopt,avx2,+smep,check"
-
 
 ## Restore ulimit
 ulimit -l $ULIMIT
