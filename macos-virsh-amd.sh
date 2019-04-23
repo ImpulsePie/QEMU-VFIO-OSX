@@ -24,26 +24,12 @@ source "${BASH_SOURCE%/*}/configmacamd"
 ## Detach the GPU
 virsh nodedev-detach $VIRSH_USB > /dev/null 2>&1
 virsh nodedev-detach $VIRSH_SATA > /dev/null 2>&1
-#virsh nodedev-detach $VIRSH_GPU > /dev/null 2>&1
-#virsh nodedev-detach $VIRSH_GPU_AUDIO > /dev/null 2>&1
 virsh nodedev-detach $VIRSH_GPU2 > /dev/null 2>&1
 virsh nodedev-detach $VIRSH_GPU_AUDIO2 > /dev/null 2>&1
 
 
 ## Load vfio
 modprobe vfio-pci
-
-      # -device ide-drive,bus=ide.0,drive=ISO \
-      # -drive id=ISO,if=none,snapshot=on,media=cdrom,file=$MACOS_ISO \
-      # -device nec-usb-xhci,id=xhci \
-      # -device vfio-pci,host=$IOMMU_USB \
-      #      -device vfio-pci,host=$IOMMU_SATA \
-      #      -usb -device usb-kbd -device usb-mouse \
-      #-device nec-usb-xhci,id=xhci \
-
-
-
-
       
 MY_OPTIONS="+pcid,+ssse3,+sse4.2,+popcnt,+avx,+aes,+xsave,+xsaveopt,check"
 
@@ -67,12 +53,6 @@ qemu-system-x86_64 -enable-kvm \
       -drive id=Clover,if=none,snapshot=on,format=qcow2,file=$MACOS_CLOVER \
       -device ide-drive,bus=ide.1,drive=HDD \
       -drive id=HDD,file=$MACOS_IMG,media=disk,format=qcow2,if=none >> $LOG 2>&1 &
-      #-object input-linux,id=kbd,evdev=/dev/input/by-id/usb-Corsair_Corsair_STRAFE_RGB_Gaming_Keyboard_0802E00BAEA90CA554E5D46FF5001942-event-kbd,grab_all=on,repeat=on \
-      #-object input-linux,id=kbd2,evdev=/dev/input/by-id/usb-Corsair_Corsair_STRAFE_RGB_Gaming_Keyboard_0802E00BAEA90CA554E5D46FF5001942-event-if00,grab_all=on,repeat=on \
-      #-object input-linux,id=mouse-event,evdev=/dev/input/by-id/usb-SteelSeries_SteelSeries_Rival_600-if01-event-mouse \
-      #-object input-linux,id=kbd3,evdev=/dev/input/by-id/usb-SteelSeries_SteelSeries_Rival_600-if02-event-kbd &
-
-
 
 ## Wait for QEMU
 wait
@@ -83,17 +63,16 @@ modprobe -r vfio_iommu_type1
 modprobe -r vfio
 
 ## Reattach the GPU
-#virsh nodedev-reattach $VIRSH_SATA > /dev/null 2>&1
+virsh nodedev-reattach $VIRSH_SATA > /dev/null 2>&1
 virsh nodedev-reattach $VIRSH_USB > /dev/null 2>&1
 virsh nodedev-reattach $VIRSH_GPU_AUDIO2 > /dev/null 2>&1
 virsh nodedev-reattach $VIRSH_GPU2 > /dev/null 2>&1
-#virsh nodedev-reattach $VIRSH_GPU_AUDIO > /dev/null 2>&1
-#virsh nodedev-reattach $VIRSH_GPU > /dev/null 2>&1
+
 
 ## Reload the framebuffer and console
-echo 1 > /sys/class/vtconsole/vtcon0/bind
-nvidia-xconfig --query-gpu-info > /dev/null 2>&1
-echo "efi-framebuffer.0" > /sys/bus/platform/drivers/efi-framebuffer/bind
+#echo 1 > /sys/class/vtconsole/vtcon0/bind
+#nvidia-xconfig --query-gpu-info > /dev/null 2>&1
+#echo "efi-framebuffer.0" > /sys/bus/platform/drivers/efi-framebuffer/bind
 
 ## Reload the Display Manager
 #systemctl start sddm
