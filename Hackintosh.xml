@@ -1,0 +1,91 @@
+<domain type='kvm' xmlns:qemu='http://libvirt.org/schemas/domain/qemu/1.0'>
+  <name>Hackintosh</name>
+  <uuid>cea8167c-7ba9-4af5-98c2-e482cb372bdc</uuid>
+  <memory unit='KiB'>12582912</memory>
+  <currentMemory unit='KiB'>12582912</currentMemory>
+  <vcpu placement='static'>8</vcpu>
+  <os>
+    <type arch='x86_64' machine='pc-i440fx-3.1'>hvm</type>
+    <loader readonly='yes' type='pflash'>/usr/share/ovmf/macos/OVMF_CODE.fd</loader>
+    <nvram>/var/lib/libvirt/qemu/nvram/macos_VARS.fd</nvram>
+    <boot dev='hd'/>
+  </os>
+  <features>
+    <acpi/>
+    <apic eoi='on'/>
+    <pae/>
+    <hap state='on'/>
+    <vmport state='off'/>
+  </features>
+  <cpu mode='host-passthrough' check='none'>
+    <topology sockets='1' cores='4' threads='2'/>
+  </cpu>
+  <clock offset='utc'>
+    <timer name='rtc' tickpolicy='catchup'/>
+    <timer name='pit' tickpolicy='delay'/>
+    <timer name='hpet' present='yes'/>
+    <timer name='tsc' present='yes'/>
+  </clock>
+  <on_poweroff>destroy</on_poweroff>
+  <on_reboot>restart</on_reboot>
+  <on_crash>destroy</on_crash>
+  <pm>
+    <suspend-to-mem enabled='no'/>
+    <suspend-to-disk enabled='no'/>
+  </pm>
+  <devices>
+    <emulator>/usr/bin/qemu-system-x86_64</emulator>
+    <disk type='file' device='disk'>
+      <driver name='qemu' type='qcow2'/>
+      <source file='/home/evan/MacOS/clover.qcow2'/>
+      <target dev='sda' bus='sata'/>
+      <address type='drive' controller='0' bus='0' target='0' unit='0'/>
+    </disk>
+    <controller type='pci' index='0' model='pci-root'/>
+    <controller type='sata' index='0'>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x04' function='0x0'/>
+    </controller>
+    <controller type='usb' index='0' model='piix3-uhci'>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x01' function='0x2'/>
+    </controller>
+    <input type='mouse' bus='ps2'/>
+    <input type='keyboard' bus='ps2'/>
+    <hostdev mode='subsystem' type='pci' managed='yes'>
+      <source>
+        <address domain='0x0000' bus='0x00' slot='0x14' function='0x0'/>
+      </source>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x02' function='0x0'/>
+    </hostdev>
+    <hostdev mode='subsystem' type='pci' managed='yes'>
+      <source>
+        <address domain='0x0000' bus='0x00' slot='0x17' function='0x0'/>
+      </source>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x03' function='0x0'/>
+    </hostdev>
+    <hostdev mode='subsystem' type='pci' managed='yes'>
+      <source>
+        <address domain='0x0000' bus='0x02' slot='0x00' function='0x0'/>
+      </source>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x05' function='0x0'/>
+    </hostdev>
+    <hostdev mode='subsystem' type='pci' managed='yes'>
+      <source>
+        <address domain='0x0000' bus='0x02' slot='0x00' function='0x1'/>
+      </source>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x06' function='0x0'/>
+    </hostdev>
+    <memballoon model='none'/>
+  </devices>
+  <qemu:commandline>
+    <qemu:arg value='-cpu'/>
+    <qemu:arg value='Penryn,kvm=on,vendor=GenuineIntel,+invtsc,vmware-cpuid-freq=on,+pcid,+ssse3,+sse4.2,+popcnt,+avx,+aes,+xsave,+xsaveopt,check>
+    <qemu:arg value='-smbios'/>
+    <qemu:arg value='type=2'/>
+    <qemu:arg value='-smbios'/>
+    <qemu:arg value='type=17,speed=4266,serial=SRH-0000000,part=OSX-4266MHZ'/>
+    <qemu:arg value='-netdev'/>
+    <qemu:arg value='user,id=net0'/>
+    <qemu:arg value='-device'/>
+    <qemu:arg value='e1000-82545em,netdev=net0,id=net0,mac=52:54:00:c9:18:27'/>
+  </qemu:commandline>
+</domain>
